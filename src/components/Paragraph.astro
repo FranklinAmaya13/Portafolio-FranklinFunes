@@ -1,0 +1,9 @@
+---
+import type { ParagraphProps } from "../interfaces/Interface";
+
+const { info } = Astro.props as ParagraphProps;
+---
+
+<div>
+    <p class="text-2xl text-justify indent-20 py-5" set:html={info}> </p>
+</div>

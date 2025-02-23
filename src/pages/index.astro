@@ -1,11 +1,104 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Social from '../components/Social.astro';
+import Paragraph from '../components/Paragraph.astro'
+import Skills from '../components/Skills.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+import { getCollection, type CollectionEntry, type getEntry } from 'astro:content';
+
+type Project = CollectionEntry<'projects'> & {slug: string };
+
+const projects: Project[] = await getCollection('projects') as Project[];
+
+import { Image } from 'astro:assets';
+
+import { socials, paragraphs, skills } from '../content/data/db';
 ---
 
-<Layout>
-	<Welcome />
+<Layout title='Franklin Amaya - Ing. Sistemas'>
+	<div class=" text-gray-900 ">	
+		<main>
+
+			<section id="inicio">
+				<div class="border-15 rounded-4xl min-h-screen mx-auto flex flex-row justify-center content-center sm:gap-16 sm:py-20 ">
+					<div class="place-self-center">
+						<Image 
+							src="/imgP.png"
+							alt= "Franklin"
+							width={400}
+							height={400}
+							class="rounded-xl outline-4 outline-offset-6 outline-blue-950"
+							loading="eager"
+						/>
+					</div>
+					<div  class="place-self-center ml-10 space-y-1.5 w-ms">
+						<h1 class="text-6xl  font-semibold">Franklin Mauriel</h1>
+						<h1 class="text-6xl  font-semibold">Funes Amaya</h1>
+						<h3 class="text-xl font-medium ">Ingeniero en Sistemas</h3>
+						<h3 class="text-xl font-medium ">Entusiasta Web Developement</h3>
+						<hr class="py-1">
+						<div class="flex space-x-4">
+							
+							{
+								socials.map((social, index) => (
+									<Social 
+										name = {social.name}
+										url = {social.url}
+										icon = {social.icon}
+									/>
+								))
+							}
+							<div class="space-y-2 flex flex-row">
+								<div class="left-0 top-0 h-full w-0.5 bg-gradient-to-b from-blue-900 to-blue-500"></div>
+								<span class="font-medium ml-3 mt-1">franklinamaya32@gmail.com</span>
+							</div>
+						</div>
+					</div>	
+				</div>
+			</section>
+
+			<section id="sobre" class="flex flex-col px-80 pt-25">
+				<div class="bg-card rounded-lg p-6 shadow-lg">
+					<h1 class="text-center text-4xl  font-semibold">Sobre Mì</h1>
+						{
+							paragraphs.map((paragraph, index) => (
+								<Paragraph 
+									info= {paragraph.info}
+								/>
+							))
+						}
+					</div>	
+			</section>
+	
+			<section id="tecnologias" class="flex flex-col px-80 pt-25">
+				<div class="bg-card rounded-lg p-6 shadow-lg">
+					<Skills 
+					name="Tecnologias"
+					skills={skills}	
+				/>	
+				</div>	
+			</section>	
+
+			<section id="proyectos" class="px-80 py-25">
+				<div class="bg-card rounded-lg p-6 shadow-lg">
+					<h1 class="text-center text-4xl font-semibold ">Proyectos</h1>
+					<div class="grid grid-cols-3 gap-4">
+					{
+						projects.map((project) => (
+							<ProjectCard 
+								title = { project.data.title }
+								description = { project.data.description}
+								href = { `/projects/${project.slug}` }
+								image = { project.data.image }
+							/>
+						))
+					}
+					</div>
+				</div>
+			</section>
+
+		</main>	
+	</div>	
 </Layout>

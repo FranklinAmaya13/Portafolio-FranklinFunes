@@ -1,0 +1,33 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+type Project = CollectionEntry<'projects'> & {
+    render: () => Promise<{ Content: any; headings: any[] }>
+} & { slug: string };
+
+export async function getStaticPaths () {
+    const projectEntries: Project[] = await getCollection('projects');
+    return projectEntries.map(entry => ({
+        params: { slug: entry.slug }, props: { entry }, 
+    }));
+}
+
+interface Props{
+    entry: Project;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+---
+
+<Layout title={`Franklin Amaya - ${entry.data.title}`}>
+    <div class="max-w-4xl mx-auto px-4 pt-30 pb-10">
+        <h1 class="text-4xl font-bold mb-4">{entry.data.title}</h1>
+        <p class="text-xl mb-8">{entry.data.description}</p>
+    
+        <article class="mdx-content prose lg:prose-lg max-w-none">
+            <Content />
+        </article>
+    </div>
+</Layout>
