@@ -1,0 +1,52 @@
+---
+title: "Generador de Reportes - PokeApi"
+description: "Aplicacion Web para la generación automatizada de reportes CSV basada en datos de la PokeAPI, con una arquitectura asíncrona desplegada en Azure y gestionada con Terraform"
+image: "/GeneracionReportes.jpg"
+---
+
+El proyecto **Generador de Reportes** es una **aplicación web** desarrollada con **Next.js**, **FastAPI**, **Azure Functions** y servicios de **Azure**, cuyo propósito es permitir a los usuarios generar **reportes CSV personalizados** a partir de datos obtenidos de la **PokeAPI**. Utilizando una **arquitectura escalable** y **desacoplada**, los reportes se generan de forma **asíncrona**, almacenándose en **Azure Blob Storage** y registrándose en una **base de datos SQL**. Esta evolución del sistema incluye **funcionalidades clave** como la **eliminación completa de reportes**, el **enriquecimiento** con detalles adicionales de los **Pokémon** (como **estadísticas** y **habilidades**) y la posibilidad de generar reportes con un **muestreo aleatorio de datos**, todo manteniendo la **integridad del sistema** desplegado en la **nube**.
+
+# Diagrama de Arquitectura
+
+![Diagrama de Arquitectura](../../../public/DiagramaPokeReports.png)
+
+# Tecnologías clave
+>- Next.js 
+>- FastAPI 
+>- Azure Functions 
+>- Azure SQL 
+>- Azure Storage Account
+>- Azure Container Registry
+>- Docker
+>- Terraform
+
+# Funcionalidades Agregadas
+
+> ### Eliminación de Reportes: 
+> Se añadió un botón en el frontend para eliminar reportes, junto con una confirmación previa. En el backend, se implementó un nuevo endpoint para borrar el archivo CSV de Azure Blob Storage y su registro en la base de datos SQL.
+
+> ### Enriquecimiento del Reporte: 
+> Se modificó el proceso asíncrono en la Azure Function para incluir detalles adicionales de cada Pokémon, como sus estadísticas base y habilidades, obtenidos desde la PokeAPI, y se reflejaron en nuevas columnas del CSV.
+
+> ### Muestreo Aleatorio: 
+> Se permitió al usuario especificar un número máximo de registros para incluir en el reporte. Esta opción fue integrada en el formulario, almacenada en la base de datos y utilizada por la Azure Function para seleccionar un subconjunto aleatorio con **random.sample()**.
+
+# Desafios Encontrados
+
+>- **Manejo de errores al eliminar archivos en Azure Blob Storage:** Uno de los principales desafíos fue asegurar que, al eliminar un reporte, también se borrara correctamente el archivo en Azure **Blob Storage.** Para resolverlo, utilicé la **SDK oficial de Azure**, implementando validaciones para verificar la existencia del blob antes de intentar eliminarlo, y capturando posibles excepciones para evitar que el sistema fallara.
+>- **Obtención de datos adicionales desde la PokeAPI:** Al enriquecer el reporte, el reto fue manejar múltiples llamadas a la **PokeAPI** sin afectar el rendimiento o provocar errores si una respuesta fallaba. Lo resolví agregando bloques **try-except** para manejar fallos individuales sin detener el proceso completo, y optimizando el tiempo de espera por solicitud.
+>- **Aplicar muestreo aleatorio sin romper el flujo existente:** Integrar el **muestreo aleatorio** implicó modificar la lógica de generación del CSV sin afectar funcionalidades previas. Para solucionarlo, verifiqué si el parámetro **sample_size** era válido antes de aplicar **random.sample()**, asegurando compatibilidad con reportes que no requieren muestreo. También ajusté el modelo de datos en la **base de datos SQL** para almacenar esta nueva información sin romper el esquema existente.
+
+
+> ## Webs Desplegadas en Azure
+>- [UI](http://ui-pokereports-dev.azurewebsites.net/)
+>- [API](http://api-pokereports-dev.azurewebsites.net/)
+
+> ## Repositorios 
+>- [Frontend - Next.js](https://github.com/FranklinAmaya13/poke.reports.ui)
+>- [API - FastAPI](https://github.com/FranklinAmaya13/poke.reports.api)
+>- [Azure Function - Python](https://github.com/FranklinAmaya13/poke.reports.function)
+>- [Base de Datos - SQL Scripts](https://github.com/FranklinAmaya13/poke.reports.sql)
+>- [Infraestructura como Código - Terraform](https://github.com/FranklinAmaya13/poke.terraform)
+
+
